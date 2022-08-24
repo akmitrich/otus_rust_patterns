@@ -1,4 +1,5 @@
 mod build;
+mod d_vector;
 
 #[cfg(test)]
 mod tests {
