@@ -41,9 +41,14 @@ impl Builder {
         self.connection = Some(conn.into());
         self
     }
-    
+
     pub fn build(self) -> Option<Block> {
-        self.connection.map(|connection| Block { name: self.name, data: self.data, flags: self.flags, connection})
+        self.connection.map(|connection| Block {
+            name: self.name,
+            data: self.data,
+            flags: self.flags,
+            connection,
+        })
     }
 }
 
@@ -64,22 +69,20 @@ mod tests {
     fn test_failed_build() {
         assert!(Block::builder().build().is_none());
         let b = Block::builder();
-        let block = b.name("Failure")
-         .data(&[42, 0, 127])
-         .flags(1 << 4)
-         .build();
+        let block = b.name("Failure").data(&[42, 0, 127]).flags(1 << 4).build();
         assert!(block.is_none());
     }
 
     #[test]
     fn test_build() {
         let b = Block::builder();
-        let block = b.name("Success")
-         .data(&[42])
-         .flags(1 << 3)
-         .connection("sqlite database")
-         .build()
-         .unwrap();
+        let block = b
+            .name("Success")
+            .data(&[42])
+            .flags(1 << 3)
+            .connection("sqlite database")
+            .build()
+            .unwrap();
         assert_eq!("Success", block.name);
         assert_eq!(&42, block.data.get(0).unwrap());
         assert_eq!(8, block.flags);
